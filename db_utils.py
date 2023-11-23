@@ -36,11 +36,16 @@ class RDSDatabaseConnector():
         global engine
         engine = create_engine(f"{database_type}+{dbapi}://{user}:{password}@{host}:{port}/{database}")
        
-    # Connect to RDS Database
+    # Connect to RDS Database and return table
     def database_connection(self):
         with engine.execution_options(isolation_level='AUTOCOMMIT').connect() as conn:
+            global loan_payments
             loan_payments = pd.read_sql_table('loan_payments', engine)
-            display(loan_payments.head(10))
+
+    # Save table as CSV file
+    def save_file(self):
+        loan_payments.to_csv('../../file_saves/loan_payments.csv', index=False)
+
 
 
 #TEST. DELETE ONCE COMPLETE.
@@ -48,5 +53,6 @@ credentials = retrieve()
 
 call = RDSDatabaseConnector(credentials)
 
+call.save_file()
 
-call.database_connection()
+# %%
