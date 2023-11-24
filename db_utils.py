@@ -1,13 +1,13 @@
 #%%
 
 # Import necessary modules
-import yaml
-
-
 from sqlalchemy import create_engine
 
 
 import pandas as pd
+
+
+import yaml
 
 
 # Load the credentials yaml file
