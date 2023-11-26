@@ -93,7 +93,50 @@ class DataTransform:
         return self.loan_payments
 
 
+class DataFrameInfo():
+    """
+    Initialise class for deriving information about a dataframe.
+    """
+    def __init__(self, dataframe):
+        self.dataframe = dataframe
 
+    def find_column_types(self):
+        """
+        Return the data types in every column of the dataframe.
+        """
+        return self.dataframe.dtypes
+    
+    def get_statistics(self):
+        """
+        Return statistical information about the dataframe.
+        """
+        return self.dataframe.describe()
+    
+    def get_unique_values(self):
+        """
+        Return the unique values within each categorical column.
+        """
+        categorical_columns = self.dataframe.select_dtypes(include=['object'])
+        all_categories = {}
+        for column in categorical_columns:
+            all_categories[column] = categorical_columns[column].value_counts()
+        return all_categories
+    
+    def get_dataframe_shape(self):
+        """
+        Return the shape of the dataframe.
+        """
+        return self.dataframe.shape
+
+    def percentage_null_values(self):
+        """
+        Return the percentage of null values in each column of the dataframe.
+        """
+        all_null_percentages = {}
+        for column in self.dataframe:
+            all_null_percentages[column] = self.dataframe[column].isnull().sum() * 100 / len(self.dataframe)
+        null_percentages_table = pd.DataFrame.from_dict(all_null_percentages, orient='index', columns=['percentage_null_values'])
+        return null_percentages_table.round(2)
 
 #TEST. DELETE ONCE COMPLETE.
 credentials = retrieve()
@@ -102,13 +145,14 @@ call = RDSDatabaseConnector(credentials)
 
 table = open_table()
 
-table.dtypes
-
 transform_call = DataTransform(table)
 
 transform_call.remove_term_column_strings()
 
 transform_call.iterate_through_columns()
 
+find_info = DataFrameInfo(table)
+
+find_info.percentage_null_values()
 
 # %%
