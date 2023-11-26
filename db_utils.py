@@ -136,7 +136,32 @@ class DataFrameInfo():
         for column in self.dataframe:
             all_null_percentages[column] = self.dataframe[column].isnull().sum() * 100 / len(self.dataframe)
         null_percentages_table = pd.DataFrame.from_dict(all_null_percentages, orient='index', columns=['percentage_null_values'])
+        null_percentages_table = null_percentages_table.sort_values(by='percentage_null_values', ascending=False)
         return null_percentages_table.round(2)
+    
+
+class Plotter:
+    """
+    Initialise the class for visualising data insights.
+    """
+    def __init__(self, table):
+        self.table = table
+
+
+class DataFrameTransform:
+    """
+    Initialise the class for performing EDA transformations.
+    """
+    def __init__(self, table, null_percentages_table):
+        self.table = table
+        self.null_percentages_table = null_percentages_table
+
+    def drop_columns(self):
+        for index, row in self.null_percentages_table.iterrows():
+            if row < 85:
+                self.table = self.table.drop(columns=index)
+        return self.table
+
 
 #TEST. DELETE ONCE COMPLETE.
 credentials = retrieve()
@@ -153,6 +178,10 @@ transform_call.iterate_through_columns()
 
 find_info = DataFrameInfo(table)
 
-find_info.percentage_null_values()
+null_percentages_table = find_info.percentage_null_values()
+
+data_frame_transform_call = DataFrameTransform(table, null_percentages_table)
+
+data_frame_transform_call.drop_columns()
 
 # %%
