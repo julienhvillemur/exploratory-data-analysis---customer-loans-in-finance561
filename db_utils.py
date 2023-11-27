@@ -139,6 +139,10 @@ class DataFrameInfo():
         null_percentages_table = null_percentages_table.sort_values(by='percentage_null_values', ascending=False)
         return null_percentages_table.round(2)
     
+    def get_column_mean(self, column_name):
+        filled_column = self.dataframe[column_name].fillna(0)
+        return filled_column.mean().round()
+    
 
 class Plotter:
     """
@@ -146,21 +150,6 @@ class Plotter:
     """
     def __init__(self, table):
         self.table = table
-
-
-class DataFrameTransform:
-    """
-    Initialise the class for performing EDA transformations.
-    """
-    def __init__(self, table, null_percentages_table):
-        self.table = table
-        self.null_percentages_table = null_percentages_table
-
-    def drop_columns(self):
-        for index, row in self.null_percentages_table.iterrows():
-            if row < 85:
-                self.table = self.table.drop(columns=index)
-        return self.table
 
 
 #TEST. DELETE ONCE COMPLETE.
@@ -178,10 +167,53 @@ transform_call.iterate_through_columns()
 
 find_info = DataFrameInfo(table)
 
+mean = find_info.get_column_mean('int_rate')
+
+print(mean)
+
 null_percentages_table = find_info.percentage_null_values()
+# DRAFT
 
-data_frame_transform_call = DataFrameTransform(table, null_percentages_table)
 
+class DataFrameTransform:
+    """
+    Initialise the class for performing EDA transformations.
+    """
+    def __init__(self, table, null_percentages_table, null_columns, low_null_columns):
+        self.table = table
+        self.null_percentages_table = null_percentages_table
+        self.null_columns = null_columns
+        self.low_null_columns = low_null_columns
+       
+    def drop_columns(self):
+        reduced_table = self.table.drop(self.null_columns, axis=1)
+        return reduced_table
+        # DRAFT automatic column drop.
+        #reduced_table = [column.drop(columns=index) for column in self.table if self.null_percentages_table['percentage_null_values'] > 50]
+        #return reduced_table
+        
+    def impute_values(self):
+        """
+        Impute null values with the mean of columns with < 10% null values respectively.
+        """
+        for column_name in self.low_null_columns:
+            mean = find_info.get_column_mean(column_name)
+            imputed_table = self.table[column_name].fillna(mean)
+        return imputed_table
+
+
+ # Columns with >50% null values
+highest_null_proportion_columns = ['mths_since_last_record', 'mths_since_last_major_derog', 'next_payment_date', 'mths_since_last_delinq']
+
+# Columns with <10% null values
+low_null_columns = ['int_rate', 'term', 'funded_amount', 'employment_length', 'last_payment_date', 'collections_12_mths_ex_med', 'last_credit_pull_date']
+
+data_frame_transform_call = DataFrameTransform(table, null_percentages_table, highest_null_proportion_columns, low_null_columns)
+
+# Drop all columns with > 50% null values
 data_frame_transform_call.drop_columns()
+
+# Impute all null values in columns with <10% null values
+data_frame_transform_call.impute_values()
 
 # %%
