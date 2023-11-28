@@ -140,8 +140,8 @@ class DataFrameInfo():
         return null_percentages_table.round(2)
     
     def get_column_mean(self, column_name):
-        filled_column = self.dataframe[column_name].fillna(0)
-        return filled_column.mean().round(0)
+        filled_column = self.dataframe[column_name].fillna(0, inplace=True)
+        return self.dataframe[column_name].mean().round(0)
     
 
 class Plotter:
@@ -167,7 +167,7 @@ transform_call.iterate_through_columns()
 
 find_info = DataFrameInfo(table)
 
-print(mean)
+#find_info.get_column_mean()
 
 null_percentages_table = find_info.percentage_null_values()
 # DRAFT
@@ -195,17 +195,21 @@ class DataFrameTransform:
         Impute null values with the mean of columns with < 10% null values respectively.
         """
         for column_name in self.low_null_columns:
+            print(column_name)
             mean = find_info.get_column_mean(column_name)
             print(mean)
-            imputed_table = self.table[column_name].fillna(mean)
-        return imputed_table
+            self.table[column_name].fillna(mean, inplace=True)
+        return self.table
 
 
  # Columns with >50% null values
 highest_null_proportion_columns = ['mths_since_last_record', 'mths_since_last_major_derog', 'next_payment_date', 'mths_since_last_delinq']
 
 # Columns with <10% null values
-low_null_columns = ['int_rate', 'term', 'funded_amount', 'employment_length', 'last_payment_date', 'collections_12_mths_ex_med', 'last_credit_pull_date']
+low_null_columns = ['int_rate', 'funded_amount', 'last_payment_date', 'collections_12_mths_ex_med', 'last_credit_pull_date']
+
+# Columns unable to be imputed under the current method
+unchanged_columns = ['term', 'employment_length', ]
 
 data_frame_transform_call = DataFrameTransform(table, null_percentages_table, highest_null_proportion_columns, low_null_columns)
 
@@ -213,6 +217,7 @@ data_frame_transform_call = DataFrameTransform(table, null_percentages_table, hi
 data_frame_transform_call.drop_columns()
 
 # Impute all null values in columns with <10% null values
+display(table)
 data_frame_transform_call.impute_values()
 
 # %%
