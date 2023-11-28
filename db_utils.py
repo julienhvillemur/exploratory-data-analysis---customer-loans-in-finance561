@@ -141,7 +141,7 @@ class DataFrameInfo():
     
     def get_column_mean(self, column_name):
         filled_column = self.dataframe[column_name].fillna(0)
-        return filled_column.mean().round()
+        return filled_column.mean().round(0)
     
 
 class Plotter:
@@ -166,8 +166,6 @@ transform_call.remove_term_column_strings()
 transform_call.iterate_through_columns()
 
 find_info = DataFrameInfo(table)
-
-mean = find_info.get_column_mean('int_rate')
 
 print(mean)
 
@@ -198,6 +196,7 @@ class DataFrameTransform:
         """
         for column_name in self.low_null_columns:
             mean = find_info.get_column_mean(column_name)
+            print(mean)
             imputed_table = self.table[column_name].fillna(mean)
         return imputed_table
 
