@@ -75,8 +75,7 @@ class DataTransform:
 
     def remove_term_column_strings(self):
         self.loan_payments['term'] = self.loan_payments['term'].str.split(' ').str[0]
-        self.loan_payments['term'].fillna(0, inplace=True)
-        self.loan_payments['term'] = self.loan_payments['term'].astype('int64')
+        self.loan_payments['term'] = self.loan_payments['term'].astype('float64')
         return self.loan_payments
         
     def convert_to_date(self, loan_payments, column_name):
@@ -149,11 +148,14 @@ class DataFrameInfo():
         return null_percentages_table.round(2)
     
     def get_column_mean(self, column_name):
-        filled_column = self.dataframe[column_name].fillna(0, inplace=True)
-        return self.dataframe[column_name].mean().round(0)
+        #filled_column = self.dataframe[column_name].fillna(0, inplace=True)
+        #print(filled_column)
+        #return self.dataframe[column_name].mean().round(0)
+        return self.dataframe[column_name].mean(skipna=True).round(0)
     
     def column_skew(self, column_names):
-        return self.dataframe[column_names].skew()
+        for column in column_names:
+            return self.dataframe[column].skew()
     
     def get_mode(self, column_names):
         return self.dataframe[column_names].mode().values[0]
@@ -192,6 +194,7 @@ transform_call.iterate_through_columns()
 find_info = DataFrameInfo(table)
 
 null_percentages_table = find_info.percentage_null_values()
+
 # DRAFT
 
 
@@ -199,26 +202,23 @@ class DataFrameTransform:
     """
     Initialise the class for performing EDA transformations.
     """
-    def __init__(self, table, null_percentages_table, null_columns, low_null_columns, categorical_columns, high_skew_columns, date_columns):
+    def __init__(self, table, null_percentages_table, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns):
         self.table = table
         self.null_percentages_table = null_percentages_table
         self.null_columns = null_columns
-        self.low_null_columns = low_null_columns
+        self.low_skew_columns = low_skew_columns
         self.categorical_columns = categorical_columns
         self.high_skew_columns = high_skew_columns
         self.date_columns = date_columns
        
     def drop_columns(self):
         return self.table.drop(self.null_columns, axis=1, inplace=True)
-        # DRAFT automatic column drop.
-        #reduced_table = [column.drop(columns=index) for column in self.table if self.null_percentages_table['percentage_null_values'] > 50]
-        #return reduced_table
         
     def impute_with_mean(self):
         """
         Impute null values with the mean of columns with < 10% null values respectively.
         """
-        for column_name in self.low_null_columns:
+        for column_name in self.low_skew_columns:
             mean = find_info.get_column_mean(column_name)
             self.table[column_name].fillna(mean, inplace=True)
         return self.table
@@ -233,51 +233,62 @@ class DataFrameTransform:
         for column_name in self.high_skew_columns:
             median = find_info.get_median(column_name)
             self.table[column_name].fillna(median, inplace=True)
+        return self.table
 
     def drop_rows(self):
-        return self.table.dropna(subset=self.date_columns, inplace=True)
+        self.table.dropna(subset=self.date_columns, inplace=True)
+        return self.table
 
 
- # Columns with >50% null values
+# Columns with null values:
+all_null_columns = ['mths_since_last_record', 'mths_since_last_major_derog', 'next_payment_date', 'mths_since_last_delinq', 'employment_length', 'last_payment_date', 'last_credit_pull_date','term', 'int_rate', 'funded_amount', 'collections_12_mths_ex_med']
+
+ # Columns with >50% null values:
 highest_null_proportion_columns = ['mths_since_last_record', 'mths_since_last_major_derog', 'next_payment_date', 'mths_since_last_delinq']
 
-# Categorical columns
-categorical_columns = ['employment_length'] # Contains null values
+# Categorical columns:
+categorical_columns = ['employment_length', 'term'] # Contains null values
 
 # Date columns
 date_columns = ['last_payment_date', 'last_credit_pull_date'] # Contains null values
 
-# Columns with <10% null values
-low_null_columns = ['term', 'int_rate', 'funded_amount']
+# Columns with <10% null values:
+low_null_columns = ['int_rate', 'funded_amount', 'last_payment_date', 'last_credit_pull_date', 'collections_12_mths_ex_med']
 
-# Columns with >1 skew
+# Assessing sknewness of columns.
+skewness = find_info.column_skew(low_null_columns)
+
+# Columns with <1 skew:
+low_skew_columns = ['int_rate', 'funded_amount']
+
+# Columns with >1 skew:
 high_skew_columns = ['collections_12_mths_ex_med']
 
-data_frame_transform_call = DataFrameTransform(table, null_percentages_table, highest_null_proportion_columns, low_null_columns, categorical_columns, high_skew_columns, date_columns)
+data_frame_transform_call = DataFrameTransform(table, null_percentages_table, highest_null_proportion_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns)
 
-# Drop all columns with >50% null values
+# Drop all columns with >50% null values.
 data_frame_transform_call.drop_columns()
 
-# Assessing sknewness of columns with >10% null values
-skewness = find_info.column_skew(low_null_columns)
-print(skewness)
-
-# Impute all null values in columns with <10% null values
+# Impute all null values in columns with <10% null values.
 data_frame_transform_call.impute_with_mean()
-#find_info.column_skew()
-find_info.find_column_types(low_null_columns)
 
+#find_info.column_skew()
+find_info.find_column_types(low_skew_columns)
+
+# Impute null values in categorical columns with mode.
 data_frame_transform_call.impute_with_mode()
 
+# Impute null values in columns with >1 skew with median.
 data_frame_transform_call.impute_with_median()
 
+# Drop rows with null values in columns with <1% null values.
 new_table = data_frame_transform_call.drop_rows()
 
-null_info = find_info.percentage_null_values()
-print(null_info)
+new_info = DataFrameInfo(new_table)
+
+new_null = new_info.percentage_null_values()
 
 plotter_call = Plotter(old_table, new_table)
-
 plotter_call.compare_heatmaps
 
 # %%
