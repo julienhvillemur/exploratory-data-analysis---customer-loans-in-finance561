@@ -7,10 +7,16 @@ from datetime import datetime
 from sqlalchemy import create_engine
 
 
+import matplotlib
+
+
+import matplotlib.pyplot as plt
+
+
 import pandas as pd
 
+
 import missingno as msno
-#import seaborn as sns
 
 
 import yaml
@@ -148,20 +154,26 @@ class DataFrameInfo():
         return null_percentages_table.round(2)
     
     def get_column_mean(self, column_name):
-        #filled_column = self.dataframe[column_name].fillna(0, inplace=True)
-        #print(filled_column)
-        #return self.dataframe[column_name].mean().round(0)
         return self.dataframe[column_name].mean(skipna=True).round(0)
     
-    def column_skew(self, column_names):
-        for column in column_names:
-            return self.dataframe[column].skew()
+    def column_skew(self, *column_names):
+        if column_names:
+            all_skew = []
+            for column in column_names:
+                skew = {column:self.dataframe[column].skew()}
+                all_skew.append(skew)
+            return all_skew
+        else:
+            return self.dataframe.skew(numeric_only=True)
     
     def get_mode(self, column_names):
         return self.dataframe[column_names].mode().values[0]
     
     def get_median(self, column_names):
         return self.dataframe[column_names].median()
+    
+    def get_histogram(self):
+        return self.dataframe.hist(figsize=(15,20))
 
 class Plotter:
     """
@@ -184,7 +196,6 @@ class Plotter:
 table = open_table()
 
 # Visualise the raw dataframe.
-print('Original table:')
 msno.matrix(table)
 
 old_table = table
@@ -260,7 +271,7 @@ date_columns = ['last_payment_date', 'last_credit_pull_date'] # Contains null va
 low_null_columns = ['int_rate', 'funded_amount', 'last_payment_date', 'last_credit_pull_date', 'collections_12_mths_ex_med']
 
 # Assessing sknewness of columns.
-skewness = find_info.column_skew(low_null_columns)
+#skewness = find_info.column_skew(low_null_columns)
 
 # Columns with <1 skew:
 low_skew_columns = ['int_rate', 'funded_amount']
@@ -268,6 +279,7 @@ low_skew_columns = ['int_rate', 'funded_amount']
 # Columns with >1 skew:
 high_skew_columns = ['collections_12_mths_ex_med']
 
+# Call the DataFrameTransform class.
 data_frame_transform_call = DataFrameTransform(table, null_percentages_table, highest_null_proportion_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns)
 
 # Drop all columns with >50% null values.
@@ -275,9 +287,6 @@ data_frame_transform_call.drop_columns()
 
 # Impute all null values in columns with <10% null values.
 data_frame_transform_call.impute_with_mean()
-
-#find_info.column_skew()
-find_info.find_column_types(low_skew_columns)
 
 # Impute null values in categorical columns with mode.
 data_frame_transform_call.impute_with_mode()
@@ -288,14 +297,29 @@ data_frame_transform_call.impute_with_median()
 # Drop rows with null values in columns with <1% null values.
 new_table = data_frame_transform_call.drop_rows()
 
-print('New table:')
+# Visualise the dataframe after removal of null values.
 msno.matrix(new_table)
 
+# List all column names in the dataframe.
+all_column_names = list(new_table)
+
+# Call DataFrameInfo class with latest dataframe.
 new_info = DataFrameInfo(new_table)
 
-new_null = new_info.percentage_null_values()
+# View data types within new dataframe.
+new_table_data_types = new_info.find_column_types()
+print(new_table_data_types)
 
-#plotter_call = Plotter(old_table, new_table)
-#plotter_call.compare_heatmaps
+# Numeric columns:
+numeric_columns = ['']
+
+# Assess skew of new dataframe.
+all_skew = new_info.column_skew()
+print(all_skew)
+
+# Visualise the skewness of the dataframe.
+new_info.get_histogram()
+
+
 
 # %%
