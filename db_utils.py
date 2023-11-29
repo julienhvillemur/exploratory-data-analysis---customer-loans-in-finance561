@@ -184,6 +184,7 @@ class Plotter:
 table = open_table()
 
 # Visualise the raw dataframe.
+print('Original table:')
 msno.matrix(table)
 
 old_table = table
@@ -286,6 +287,9 @@ data_frame_transform_call.impute_with_median()
 
 # Drop rows with null values in columns with <1% null values.
 new_table = data_frame_transform_call.drop_rows()
+
+print('New table:')
+msno.matrix(new_table)
 
 new_info = DataFrameInfo(new_table)
 
