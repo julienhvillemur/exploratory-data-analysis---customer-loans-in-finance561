@@ -9,12 +9,12 @@ from sqlalchemy import create_engine
 
 import pandas as pd
 
-
-import seaborn as sns
+import missingno as msno
+#import seaborn as sns
 
 
 import yaml
-
+ 
 
 # Load the credentials yaml file
 def retrieve():
@@ -177,11 +177,14 @@ class Plotter:
         sns.heatmap(self.clean_table.corr(), annot=True, cmap='coolwarm')
 
 #TEST. DELETE ONCE COMPLETE.
-credentials = retrieve()
+#credentials = retrieve()
 
-call = RDSDatabaseConnector(credentials)
+#call = RDSDatabaseConnector(credentials)
 
 table = open_table()
+
+# Visualise the raw dataframe.
+msno.matrix(table)
 
 old_table = table
 
@@ -288,7 +291,7 @@ new_info = DataFrameInfo(new_table)
 
 new_null = new_info.percentage_null_values()
 
-plotter_call = Plotter(old_table, new_table)
-plotter_call.compare_heatmaps
+#plotter_call = Plotter(old_table, new_table)
+#plotter_call.compare_heatmaps
 
 # %%
