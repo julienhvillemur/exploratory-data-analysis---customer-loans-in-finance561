@@ -1,5 +1,3 @@
-#%%
-
 # Import necessary modules
 from datetime import datetime
 
@@ -20,6 +18,9 @@ import pandas as pd
 
 
 import missingno as msno
+
+
+import seaborn as sns
 
 
 import yaml
@@ -336,4 +337,3 @@ boxcox_transform = transform_post_null_removal.boxcox_transform_skew()
 
 print(boxcox_transform)
 
-# %%
