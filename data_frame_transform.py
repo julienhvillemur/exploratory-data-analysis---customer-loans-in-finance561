@@ -1,5 +1,5 @@
 # Import necessary modules.
-from data_frame_info import get_mode
+from data_frame_info import DataFrameInfo
 
 
 from scipy import stats
@@ -17,13 +17,13 @@ import pandas as pd
 import seaborn as sns
 
 
-class Transform:
+class StatsChanges:
     """
     Initialise the class for performing EDA transformations.
     """
-    def __init__(self, table, find_info, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns):
+    def __init__(self, table, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns):
         self.table = table
-        self.find_info = find_info
+        self.find_info = DataFrameInfo(self.table)
         self.null_columns = null_columns
         self.low_skew_columns = low_skew_columns
         self.categorical_columns = categorical_columns
@@ -38,7 +38,7 @@ class Transform:
         Impute null values with the mean of columns with < 10% null values respectively.
         """
         for column_name in self.low_skew_columns:
-            mean = find_info.get_column_mean(column_name)
+            mean = self.find_info.get_column_mean(column_name)
             self.table[column_name].fillna(mean, inplace=True)
         return self.table
     
