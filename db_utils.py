@@ -4,6 +4,9 @@
 from datetime import datetime
 
 
+from scipy import stats
+
+
 from sqlalchemy import create_engine
 
 
@@ -188,36 +191,37 @@ class Plotter:
         sns.heatmap(self.original_table.corr(), annot=True, cmap='coolwarm')
         sns.heatmap(self.clean_table.corr(), annot=True, cmap='coolwarm')
 
-#TEST. DELETE ONCE COMPLETE.
+
+# actions
 #credentials = retrieve()
 
 #call = RDSDatabaseConnector(credentials)
 
-table = open_table()
+raw_table = open_table()
 
 # Visualise the raw dataframe.
-msno.matrix(table)
+#msno.matrix(raw_table)
 
-old_table = table
+old_table = raw_table
 
-transform_call = DataTransform(table)
+transform_call = DataTransform(raw_table)
 
 transform_call.remove_term_column_strings()
 
 transform_call.iterate_through_columns()
 
-find_info = DataFrameInfo(table)
+find_info = DataFrameInfo(raw_table)
 
 null_percentages_table = find_info.percentage_null_values()
 
-# DRAFT
+# actions
 
 
 class DataFrameTransform:
     """
     Initialise the class for performing EDA transformations.
     """
-    def __init__(self, table, null_percentages_table, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns):
+    def __init__(self, table, null_percentages_table, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns, skew_table):
         self.table = table
         self.null_percentages_table = null_percentages_table
         self.null_columns = null_columns
@@ -225,6 +229,7 @@ class DataFrameTransform:
         self.categorical_columns = categorical_columns
         self.high_skew_columns = high_skew_columns
         self.date_columns = date_columns
+        self.skew_table = skew_table
        
     def drop_columns(self):
         return self.table.drop(self.null_columns, axis=1, inplace=True)
@@ -253,6 +258,15 @@ class DataFrameTransform:
     def drop_rows(self):
         self.table.dropna(subset=self.date_columns, inplace=True)
         return self.table
+    
+    def boxcox_transform_skew(self):
+        for column, skew in self.skew_table:
+            if skew > 1:
+                boxcox_sample = self.table[column]
+                boxcox_transform = stats.boxcox(boxcox_sample)
+                boxcox_data = pd.Series(boxcox_transform[0])
+                plot = sns.histplot(boxcox_data, label='Skewness: %.2f'%(boxcox_data.skew()))
+            return plot.legend()
 
 
 # Columns with null values:
@@ -280,7 +294,7 @@ low_skew_columns = ['int_rate', 'funded_amount']
 high_skew_columns = ['collections_12_mths_ex_med']
 
 # Call the DataFrameTransform class.
-data_frame_transform_call = DataFrameTransform(table, null_percentages_table, highest_null_proportion_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns)
+data_frame_transform_call = DataFrameTransform(raw_table, null_percentages_table, highest_null_proportion_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns)
 
 # Drop all columns with >50% null values.
 data_frame_transform_call.drop_columns()
@@ -295,31 +309,31 @@ data_frame_transform_call.impute_with_mode()
 data_frame_transform_call.impute_with_median()
 
 # Drop rows with null values in columns with <1% null values.
-new_table = data_frame_transform_call.drop_rows()
+no_null_table = data_frame_transform_call.drop_rows()
 
 # Visualise the dataframe after removal of null values.
-msno.matrix(new_table)
+#msno.matrix(no_null_table)
 
 # List all column names in the dataframe.
-all_column_names = list(new_table)
+all_column_names = list(no_null_table)
 
 # Call DataFrameInfo class with latest dataframe.
-new_info = DataFrameInfo(new_table)
+new_info = DataFrameInfo(no_null_table)
 
 # View data types within new dataframe.
 new_table_data_types = new_info.find_column_types()
-print(new_table_data_types)
-
-# Numeric columns:
-numeric_columns = ['']
 
 # Assess skew of new dataframe.
 all_skew = new_info.column_skew()
-print(all_skew)
 
 # Visualise the skewness of the dataframe.
 new_info.get_histogram()
 
+# Call the DataFrameTransform class after removal of nulls in the dataframe.
+transform_post_null_removal = DataFrameTransform(raw_table, null_percentages_table, highest_null_proportion_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns, all_skew)
 
+boxcox_transform = transform_post_null_removal.boxcox_transform_skew()
+
+print(boxcox_transform)
 
 # %%
