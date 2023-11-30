@@ -58,11 +58,20 @@ class Transform:
         self.table.dropna(subset=self.date_columns, inplace=True)
         return self.table
     
-    def boxcox_transform_skew(self, skew_table):
+    def boxcox_transform(self, skew_table):
         for column, skew in skew_table:
             if skew > 1:
                 boxcox_sample = self.table[column]
                 boxcox_transform = stats.boxcox(boxcox_sample)
                 boxcox_data = pd.Series(boxcox_transform[0])
                 plot = sns.histplot(boxcox_data, label='Skewness: %.2f'%(boxcox_data.skew()))
+            return plot.legend()
+        
+    def yeojohnson_transform(self, skew_table):
+        for column, skew in skew_table.items():
+            if skew > 1:      
+                yeojohnson_sample = self.table[column]
+                yeojohnson_transform = stats.yeojohnson(yeojohnson_sample)
+                yeojohnson_data= pd.Series(yeojohnson_transform[0])
+                plot=sns.histplot(yeojohnson_data,label="Skewness: %.2f"%(yeojohnson_data.skew()) )
             return plot.legend()
