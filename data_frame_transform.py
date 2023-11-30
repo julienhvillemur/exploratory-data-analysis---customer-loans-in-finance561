@@ -1,4 +1,7 @@
 # Import necessary modules.
+from data_frame_info import get_mode
+
+
 from scipy import stats
 
 
@@ -11,22 +14,21 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-seaborn as sns
+import seaborn as sns
 
 
-class DataFrameTransform:
+class Transform:
     """
     Initialise the class for performing EDA transformations.
     """
-    def __init__(self, table, null_percentages_table, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns, skew_table):
+    def __init__(self, table, find_info, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns):
         self.table = table
-        self.null_percentages_table = null_percentages_table
+        self.find_info = find_info
         self.null_columns = null_columns
         self.low_skew_columns = low_skew_columns
         self.categorical_columns = categorical_columns
         self.high_skew_columns = high_skew_columns
         self.date_columns = date_columns
-        self.skew_table = skew_table
        
     def drop_columns(self):
         return self.table.drop(self.null_columns, axis=1, inplace=True)
@@ -42,13 +44,13 @@ class DataFrameTransform:
     
     def impute_with_mode(self):
         for column_name in self.categorical_columns:
-            mode = find_info.get_mode(column_name)
+            mode = self.find_info.get_mode(column_name)
             self.table[column_name].fillna(mode, inplace=True)
         return self.table
     
     def impute_with_median(self):
         for column_name in self.high_skew_columns:
-            median = find_info.get_median(column_name)
+            median = self.find_info.get_median(column_name)
             self.table[column_name].fillna(median, inplace=True)
         return self.table
 
@@ -56,8 +58,8 @@ class DataFrameTransform:
         self.table.dropna(subset=self.date_columns, inplace=True)
         return self.table
     
-    def boxcox_transform_skew(self):
-        for column, skew in self.skew_table:
+    def boxcox_transform_skew(self, skew_table):
+        for column, skew in skew_table:
             if skew > 1:
                 boxcox_sample = self.table[column]
                 boxcox_transform = stats.boxcox(boxcox_sample)

@@ -51,8 +51,8 @@ class DataFrameInfo():
         all_null_percentages = {}
         for column in self.dataframe:
             all_null_percentages[column] = self.dataframe[column].isnull().sum() * 100 / len(self.dataframe)
-        null_percentages_table = pd.DataFrame.from_dict(all_null_percentages, orient='index', columns=['percentage_null_values'])
-        null_percentages_table = null_percentages_table.sort_values(by='percentage_null_values', ascending=False)
+        null_percentages_table = pd.DataFrame.from_dict(all_null_percentages, orient='index')
+        null_percentages_table = null_percentages_table.sort_values(ascending=False)
         return null_percentages_table.round(2)
     
     def get_column_mean(self, column_name):
@@ -62,7 +62,7 @@ class DataFrameInfo():
         if column_names:
             all_skew = []
             for column in column_names:
-                skew = {column:self.dataframe[column].skew()}
+                skew = {column:self.dataframe[column].skew(numeric_only=True)}
                 all_skew.append(skew)
             return all_skew
         else:
