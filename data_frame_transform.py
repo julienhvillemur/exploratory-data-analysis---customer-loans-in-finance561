@@ -14,48 +14,46 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
+import numpy as np
+
+
 import seaborn as sns
 
 
-class StatsChanges:
+class DataFrameTransform:
     """
     Initialise the class for performing EDA transformations.
     """
-    def __init__(self, table, null_columns, low_skew_columns, categorical_columns, high_skew_columns, date_columns):
+    def __init__(self, table):
         self.table = table
         self.find_info = DataFrameInfo(self.table)
-        self.null_columns = null_columns
-        self.low_skew_columns = low_skew_columns
-        self.categorical_columns = categorical_columns
-        self.high_skew_columns = high_skew_columns
-        self.date_columns = date_columns
        
-    def drop_columns(self):
-        return self.table.drop(self.null_columns, axis=1, inplace=True)
+    def drop_columns(self, columns):
+        return self.table.drop(columns, axis=1, inplace=True)
         
-    def impute_with_mean(self):
+    def impute_with_mean(self, columns):
         """
         Impute null values with the mean of columns with < 10% null values respectively.
         """
-        for column_name in self.low_skew_columns:
+        for column_name in columns:
             mean = self.find_info.get_column_mean(column_name)
             self.table[column_name].fillna(mean, inplace=True)
         return self.table
     
-    def impute_with_mode(self):
-        for column_name in self.categorical_columns:
+    def impute_with_mode(self, columns):
+        for column_name in columns:
             mode = self.find_info.get_mode(column_name)
             self.table[column_name].fillna(mode, inplace=True)
         return self.table
     
-    def impute_with_median(self):
-        for column_name in self.high_skew_columns:
+    def impute_with_median(self, columns):
+        for column_name in columns:
             median = self.find_info.get_median(column_name)
             self.table[column_name].fillna(median, inplace=True)
         return self.table
 
-    def drop_rows(self):
-        self.table.dropna(subset=self.date_columns, inplace=True)
+    def drop_rows(self, columns):
+        self.table.dropna(subset=columns, inplace=True)
         return self.table
     
     def boxcox_transform(self, skew_table):
@@ -75,3 +73,9 @@ class StatsChanges:
                 yeojohnson_data= pd.Series(yeojohnson_transform[0])
                 plot=sns.histplot(yeojohnson_data,label="Skewness: %.2f"%(yeojohnson_data.skew()) )
             return plot.legend()
+        
+    def remove_outliers(self):
+        numeric_columns = self.table.select_dtypes(include=np.number)
+        outliers_mask = (np.abs(stats.zscore(numeric_columns)) > 1).all(axis=1)
+        refined_table = self.table[outliers_mask]
+        return refined_table

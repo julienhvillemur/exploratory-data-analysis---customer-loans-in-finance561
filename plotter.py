@@ -1,6 +1,7 @@
 # Import necessary modules.
 import missingno as msno
 
+import seaborn as sns
 
 class Plotter:
     """
@@ -10,4 +11,8 @@ class Plotter:
         self.table = table
 
     def missing_data(self):
-        msno.matrix(self.table)
+        return msno.matrix(self.table)
+
+    def pair_plot(self):
+        return sns.pairplot(self.table)
+        
