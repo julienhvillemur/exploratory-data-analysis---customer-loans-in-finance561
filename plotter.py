@@ -22,5 +22,6 @@ class Plotter:
         return sns.pairplot(self.table)
     
     def correlation(self):
-        return px.imshow(self.table.corr(), title='Correlation Heatmap')
+        numeric_columns = self.table.select_dtypes(include=['number'])
+        return px.imshow(numeric_columns.corr(), title='Correlation Heatmap')
         

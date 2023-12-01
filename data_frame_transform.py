@@ -84,5 +84,5 @@ class DataFrameTransform:
                 for index, z_score in enumerate(stats.zscore(self.table[column_name])):
                     if z_score > 3:
                         median = self.find_info.get_median(column_name)
-                        self.table.iloc[self.table.columns.get_loc(column_name), index] = median
+                        self.table.iloc[index, self.table.columns.get_loc(column_name)] = median
         return self.table
