@@ -23,5 +23,5 @@ class Plotter:
     
     def correlation(self):
         numeric_columns = self.table.select_dtypes(include=['number'])
-        return px.imshow(numeric_columns.corr(), title='Correlation Heatmap')
+        return px.imshow(numeric_columns.corr(), aspect='equal', title='Correlation Heatmap', text_auto=True)
         
