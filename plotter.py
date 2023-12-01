@@ -1,7 +1,12 @@
 # Import necessary modules.
 import missingno as msno
 
+
+import plotly.express as px
+
+
 import seaborn as sns
+
 
 class Plotter:
     """
@@ -15,4 +20,7 @@ class Plotter:
 
     def pair_plot(self):
         return sns.pairplot(self.table)
+    
+    def correlation(self):
+        return px.imshow(self.table.corr(), title='Correlation Heatmap')
         

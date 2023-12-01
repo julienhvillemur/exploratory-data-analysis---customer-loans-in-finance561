@@ -74,15 +74,15 @@ class DataFrameTransform:
                 plot=sns.histplot(yeojohnson_data,label="Skewness: %.2f"%(yeojohnson_data.skew()) )
             return plot.legend()
         
-    def remove_outliers(self):
+    def impute_outliers(self):
         """
         Impute outliers in high skew columns with the median.
         """
         skew_table = self.find_info.column_skew()
-        for column_name, data in self.table.items():
+        for column_name, data in self.table.select_dtypes(include='number').items():
             if skew_table.loc[column_name] > 1:
                 for index, z_score in enumerate(stats.zscore(self.table[column_name])):
                     if z_score > 3:
                         median = self.find_info.get_median(column_name)
-                        self.table.iloc[index, self.table.columns.get_loc(column_name)] = median
+                        self.table.iloc[self.table.columns.get_loc(column_name), index] = median
         return self.table
