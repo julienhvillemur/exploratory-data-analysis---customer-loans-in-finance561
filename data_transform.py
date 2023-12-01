@@ -7,7 +7,10 @@ import pandas as pd
 
 class DataTransform:
     """
-    Initialise class for converting columns to correct format.
+    Initialise class for converting columns to correct the format.
+
+    Attributes:
+        loan_payments (pandas.DataFrame): the loan payments table to be used for EDA.
     """
     def __init__(self, loan_payments):
         """

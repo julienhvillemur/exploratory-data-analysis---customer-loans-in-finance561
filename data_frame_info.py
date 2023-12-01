@@ -1,4 +1,10 @@
 # Import necessary modules
+from scipy import stats
+
+
+import numpy as np
+
+
 import pandas as pd
 
 
@@ -76,3 +82,10 @@ class DataFrameInfo():
     
     def get_histogram(self):
         return self.dataframe.hist(figsize=(15,20))
+
+    def get_zscores(self):
+        """
+        Provide the z-scores for imputted dataframes.
+        """
+        numeric_columns = self.dataframe.select_dtypes(include=np.number)
+        return stats.zscore(numeric_columns)
