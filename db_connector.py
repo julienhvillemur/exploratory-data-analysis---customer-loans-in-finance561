@@ -54,3 +54,9 @@ def open_table():
     with open('../../file_saves/loan_payments.csv', 'r') as file:
         saved_loan_payments_table = pd.read_csv(file)
     return saved_loan_payments_table
+
+# Load transsformed CSV file as dataframe from local machine
+def open_transformed_table():
+    with open('../../file_saves/transformed_table.csv', 'r') as file:
+        saved_loan_payments_table = pd.read_csv(file)
+    return saved_loan_payments_table
