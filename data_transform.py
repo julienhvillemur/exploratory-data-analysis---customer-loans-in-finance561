@@ -14,11 +14,13 @@ class DataTransform:
     """
     def __init__(self, loan_payments):
         """
-        Initialise class parameters.
+        See help(DataTransform) for accurate signature.
         """
         self.loan_payments = loan_payments
 
     def remove_term_column_strings(self):
+        """
+        Removes string from the column column of"""
         self.loan_payments['term'] = self.loan_payments['term'].str.split(' ').str[0]
         self.loan_payments['term'] = self.loan_payments['term'].astype('float64')
         return self.loan_payments
