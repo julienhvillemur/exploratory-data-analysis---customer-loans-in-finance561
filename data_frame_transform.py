@@ -23,6 +23,10 @@ import seaborn as sns
 class DataFrameTransform:
     """
     Initialise the class for performing EDA transformations.
+
+    Attributes:
+        table (Pandas DataFrame): the dataframe to be transformed.
+        find_info (Python Class): the DataFrameInfo class initialised with this instance of the dataframe for providing information relating to the dataframe.
     """
     def __init__(self, table):
         self.table = table
