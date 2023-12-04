@@ -41,8 +41,11 @@ class Plotter:
         """
         Generates correlation matrix of dataframe.
         Returns:
-            matrix: a matrix of correlation scores between combinations of all columns within the dataframe.
+            Matrix: a matrix of correlation scores between combinations of all columns within the dataframe.
         """
         numeric_columns = self.table.select_dtypes(include=['number'])
         return px.imshow(numeric_columns.corr(), aspect='equal', title='Correlation Heatmap', text_auto=True)
+
+    def bar_chart(self, loan_recoveries)
+        return
         

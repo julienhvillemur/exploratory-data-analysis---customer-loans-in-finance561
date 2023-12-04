@@ -81,21 +81,40 @@ class DataFrameInfo():
         return self.dataframe[column_names].median()
     
     def get_histogram(self):
+        """
+        Generate histogram of provided dataframe.
+        Returns:
+            NumPy array: histogram of the provided dataframe.
+        """
         return self.dataframe.hist(figsize=(15,20))
 
     def get_zscores(self):
         """
         Provide the z-scores for imputted dataframes.
+        Returns:
+            Array: the z-scores of all numeric values in the inputted dataframe.
         """
         numeric_columns = self.dataframe.select_dtypes(include=np.number)
         return stats.zscore(numeric_columns)
 
     def recovered_loans(self):
+        """
+        Calculate the percentage of total loans and investor loan funds repaid.
+        Calculate the percentage of total loans repaid in 6 months.
+        Returns(dict): a dictionary of three variables
+            percentage_investments_recovered(numpy.float64): the percentage of the total loans amount repaid by customers.
+            overall_percentage_recovered(numpy.float64): the percentage of the investor-funded portion of loans repaid by customers.
+            percentage_recovered_after_6_months(numpy.float64): the percentage of the total amount paid after 6 months of installments from all customers.
+            """
         total_loans = self.dataframe['funded_amount'].sum()
         total_amount_recovered = total_loans - self.dataframe['out_prncp'].sum()
         total_amount_invested = self.dataframe['funded_amount_inv'].sum()
         total_investments_recovered = total_amount_invested - self.dataframe['out_prncp_inv'].sum()
         percentage_investments_recovered = (total_investments_recovered / total_amount_invested * 100).round(2)
         overall_percentage_recovered = (total_amount_recovered / total_loans * 100).round(2)
-        print(f'The proportion of loan investments recovered is {percentage_investments_recovered}%.\nThe proportion of whole loans recovered is {overall_percentage_recovered}%.')
-        return (percentage_investments_recovered, overall_percentage_recovered)
+        total_amount_paid_after_6_months = self.dataframe['instalment'].sum() * 6
+        percentage_recovered_after_6_months = (total_amount_paid_after_6_months / total_loans * 100).round(2)
+        print(f'The proportion of loan investments recovered is {percentage_investments_recovered}%.')
+        print(f'The proportion of whole loans recovered is {overall_percentage_recovered}%.')
+        print(f'6 months of customer instalments will result in {percentage_recovered_after_6_months}% loan recovery.')
+        return {'Total Loans Recovered':overall_percentage_recovered, 'Loan Investments Recovered':percentage_investments_recovered, 'Loans Recovered After 6 Months': percentage_recovered_after_6_months}
