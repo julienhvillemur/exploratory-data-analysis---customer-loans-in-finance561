@@ -89,3 +89,7 @@ class DataFrameInfo():
         """
         numeric_columns = self.dataframe.select_dtypes(include=np.number)
         return stats.zscore(numeric_columns)
+
+    def recovered_loans(self):
+        total_loans = len(self.dataframe['loan_status'])
+        

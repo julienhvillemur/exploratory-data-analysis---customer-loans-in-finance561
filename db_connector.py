@@ -59,4 +59,11 @@ def open_table():
 def open_transformed_table():
     with open('../../file_saves/transformed_table.csv', 'r') as file:
         saved_loan_payments_table = pd.read_csv(file)
-    return saved_loan_payments_table
+    return transformed_loan_payments_table
+
+# Load latest transformation of the loan_payments file.
+def open_latest_table():
+    with open('../../file_saves/refined_table.csv', 'r') as file:
+        saved_loan_payments_table = pd.read_csv(file)
+    return latest_loan_payments_table
+    
