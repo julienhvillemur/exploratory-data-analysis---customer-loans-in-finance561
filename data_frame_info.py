@@ -91,5 +91,14 @@ class DataFrameInfo():
         return stats.zscore(numeric_columns)
 
     def recovered_loans(self):
-        total_loans = len(self.dataframe['loan_status'])
+        total_loans = self.dataframe['funded_amount'].sum()
+        total_amount_recovered = total_loans - self.dataframe['out_prncp']
+        total_amount_invested = self.dataframe['funded_amount_inv'].sum()
+        total_investments_recovered = total_amount_invested - self.dataframe['out_prncp_inv']
+        percentage_investment_recovered = (total_investments_recovered / total_amount_invested * 100).round(2)
+        overall_percentage_recovered = (total_amount_paid / total_loans * 100).round(2)
+        print(f'The proportion of loan investments recovered is {percentage_investments_recovered}%.\n The proportion of whole loans recovered is {overall_percentage_recovered}%')
+        return (total_investments_recovered, overall_percentage_recovered)
+
+
         

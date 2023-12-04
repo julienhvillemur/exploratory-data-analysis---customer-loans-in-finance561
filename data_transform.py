@@ -20,7 +20,10 @@ class DataTransform:
 
     def remove_term_column_strings(self):
         """
-        Removes string from the column column of"""
+        Removes string from the term column in the loan payments dataframe.
+        Returns:
+            Pandas dataframe: the loan payments table with the 'term' column in float64 format.
+        """
         self.loan_payments['term'] = self.loan_payments['term'].str.split(' ').str[0]
         self.loan_payments['term'] = self.loan_payments['term'].astype('float64')
         return self.loan_payments
@@ -28,6 +31,8 @@ class DataTransform:
     def convert_to_date(self, loan_payments, column_name):
         """
         Convert date columns from MMM-YY to datetime format.
+        Returns:
+            Pandas dataframe: a table with all inputted date columns in the MM-YYYY format.
         """
         loan_payments[column_name] = pd.to_datetime(loan_payments[column_name], format='%b-%Y').dt.to_period('M')
         return loan_payments

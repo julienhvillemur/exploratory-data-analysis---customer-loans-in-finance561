@@ -33,7 +33,7 @@ class Plotter:
         """
         Generate a pair-plot of the dataframe.
         Returns:
-            Grid: grib of scatterplots based on inputted dataframe.
+            Grid: grid of scatterplots based on inputted dataframe.
         """
         return sns.pairplot(self.table)
     
