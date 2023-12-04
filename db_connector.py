@@ -61,9 +61,9 @@ def open_transformed_table():
         saved_loan_payments_table = pd.read_csv(file)
     return transformed_loan_payments_table
 
-# Load latest transformation of the loan_payments file.
+# Load latest transformation of the loan_payments file in the local directory.
 def open_latest_table():
-    with open('../../file_saves/refined_table.csv', 'r') as file:
-        saved_loan_payments_table = pd.read_csv(file)
+    with open('refined_table.csv', 'r') as file:
+        latest_loan_payments_table = pd.read_csv(file)
     return latest_loan_payments_table
     
