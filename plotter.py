@@ -1,4 +1,7 @@
 # Import necessary modules.
+import matplotlib.pyplot as plt
+
+
 import missingno as msno
 
 
@@ -39,13 +42,23 @@ class Plotter:
     
     def correlation(self):
         """
-        Generates correlation matrix of dataframe.
+        Generate correlation matrix of dataframe.
         Returns:
             Matrix: a matrix of correlation scores between combinations of all columns within the dataframe.
         """
         numeric_columns = self.table.select_dtypes(include=['number'])
         return px.imshow(numeric_columns.corr(), aspect='equal', title='Correlation Heatmap', text_auto=True)
 
-    def bar_chart(self, loan_recoveries)
-        return
+    def bar_chart(self, loan_recoveries):
+        """
+        Generate a bar chart of the provided loan recovery percentages.
+        Args:
+            Dict: Key - type of loan recovery. Value - percentage amount recovered against the total fund.
+        Returns:
+            BarContainer: a bar chart presenting multiple loan recovery values.
+        """
+        categories = list(loan_recoveries.keys())
+        percentages = list(loan_recoveries.values())
+        return plt.bar(categories, percentages, tick_label=categories)
+        
         

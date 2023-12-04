@@ -117,4 +117,4 @@ class DataFrameInfo():
         print(f'The proportion of loan investments recovered is {percentage_investments_recovered}%.')
         print(f'The proportion of whole loans recovered is {overall_percentage_recovered}%.')
         print(f'6 months of customer instalments will result in {percentage_recovered_after_6_months}% loan recovery.')
-        return {'Total Loans Recovered':overall_percentage_recovered, 'Loan Investments Recovered':percentage_investments_recovered, 'Loans Recovered After 6 Months': percentage_recovered_after_6_months}
+        return {'Loans Recovered':overall_percentage_recovered, 'Investments Recovered':percentage_investments_recovered, 'Loans Recovered\n After 6 months': percentage_recovered_after_6_months}
