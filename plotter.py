@@ -59,6 +59,7 @@ class Plotter:
         """
         categories = list(loan_recoveries.keys())
         percentages = list(loan_recoveries.values())
+        plt.ylabel('Percentage')
         return plt.bar(categories, percentages, tick_label=categories)
         
         

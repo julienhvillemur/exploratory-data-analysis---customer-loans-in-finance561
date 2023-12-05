@@ -34,15 +34,19 @@ class DataFrameInfo():
         """
         return self.dataframe.describe()
     
-    def get_unique_values(self):
+    def get_unique_values(self, *columns):
         """
         Return the unique values within each categorical column.
         """
-        categorical_columns = self.dataframe.select_dtypes(include=['object'])
-        all_categories = {}
-        for column in categorical_columns:
-            all_categories[column] = categorical_columns[column].value_counts()
-        return all_categories
+        if columns:
+            for column in columns:
+                return self.dataframe[column].value_counts()
+        else:
+            categorical_columns = self.dataframe.select_dtypes(include=['object'])
+            all_categories = {}
+            for column in categorical_columns:
+                all_categories[column] = categorical_columns[column].value_counts()
+            return all_categories
     
     def get_dataframe_shape(self):
         """
