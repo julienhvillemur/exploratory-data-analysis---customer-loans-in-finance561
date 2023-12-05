@@ -16,11 +16,16 @@ class DataFrameInfo():
     Initialise class for deriving information about a dataframe.
     """
     def __init__(self, dataframe):
+        """
+        See help(DataFrameInfo) for accurate signature.
+        """
         self.dataframe = dataframe
 
     def find_column_types(self, *columns):
         """
-        Return the data types in specifed columns or every column of the dataframe if not specified.
+        Provide the data types in specifed columns or every column of the dataframe if not specified.
+        Returns:
+            Pandas data series: the individual data types within the provided dataframe or dataframe columns.
         """
         if columns:
             for column in columns:
