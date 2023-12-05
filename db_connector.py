@@ -41,7 +41,7 @@ class RDSDatabaseConnector:
         loan_payments.to_csv('../../file_saves/loan_payments.csv', index=False)
 
 
-# Load the credentials yaml file
+# Load the credentials yaml file.
 def retrieve():
     with open('credentials.yaml', 'r') as file:
         credentials = yaml.safe_load(file)
@@ -49,16 +49,22 @@ def retrieve():
     return credentials
 
 
-# Load CSV file as dataframe from local machine
+# Load CSV file as dataframe from local machine.
 def open_table():
     with open('../../file_saves/loan_payments.csv', 'r') as file:
         saved_loan_payments_table = pd.read_csv(file)
     return saved_loan_payments_table
 
-# Load transformed CSV file as dataframe from local machine
+# Load null-removed CSV file as dataframe from local directory.
+def open_null_removed_table():
+    with open('null_removed_table.csv', 'r') as file:
+        no_null_loan_payments_table = pd.read_csv(file)
+    return no_null_loan_payments_table
+
+# Load transformed CSV file as dataframe from local directory.
 def open_transformed_table():
-    with open('../../file_saves/transformed_table.csv', 'r') as file:
-        saved_loan_payments_table = pd.read_csv(file)
+    with open('transformed_table.csv', 'r') as file:
+        transformed_loan_payments_table = pd.read_csv(file)
     return transformed_loan_payments_table
 
 # Load latest transformation of the loan_payments file in the local directory.

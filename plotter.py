@@ -61,5 +61,19 @@ class Plotter:
         percentages = list(loan_recoveries.values())
         plt.ylabel('Percentage')
         return plt.bar(categories, percentages, tick_label=categories)
-        
+
+    def line_graph(self, projected_loss, real_loss):
+        """
+        Visualise projected loss using line graph.
+        Displays PyPlot of projected loss data.
+        """
+        months = [0, 60]
+        loss = [0, projected_loss]
+        real_loss_plot = [0, real_loss]
+        plt.plot(months, loss, label='Projected Loss')
+        plt.plot(months, real_loss_plot, label='Real Projected Loss')
+        plt.xlabel('Months')
+        plt.ylabel('Projected Loss')
+        leg = plt.legend(loc='upper center')
+        plt.show()
         
