@@ -2,6 +2,9 @@
 from scipy import stats
 
 
+from scipy.stats import chi2_contingency
+
+
 import numpy as np
 
 
@@ -127,3 +130,21 @@ class DataFrameInfo():
         print(f'The proportion of whole loans recovered is {overall_percentage_recovered}%.')
         print(f'6 months of customer instalments will result in {percentage_recovered_after_6_months}% loan recovery.')
         return {'Loans Recovered':overall_percentage_recovered, 'Investments Recovered':percentage_investments_recovered, 'Loans Recovered\n After 6 months': percentage_recovered_after_6_months}
+
+    def chi_square_test(self, customer_type, risk_factors):
+        """
+        Test statistical relationship between loan_status and risk-factor columns via Chi-square.
+        Args:
+            customer_type(Pandas dataframe): the loan payments table containing rows isolated to different customer types based on the 'loan_status' column.
+            risk_factors(list): a list of columns representing potential risk factors for late loan payments.
+        Returns:
+            Pandas dataframe: a table containing the Chi-square statistic and p-value for set of tested columns.
+        """
+        statistics = pd.DataFrame(columns=['Risk Factor', 'Chi-square Statistic', 'p-value'])
+        for risk_column in risk_factors:
+            contingency_table = pd.crosstab(customer_type['loan_status'], customer_type[risk_column])
+            chi2, p, dof, expected = chi2_contingency(contingency_table)
+            print(f"Statistical comparison between {risk_column} and loan_status provides a Chi-square statistic of {chi2} and a p-value of {p}")
+            new_row = [{'Risk Factor': risk_column, 'Chi-square Statistic': chi2, 'p-value': p}]
+            statistics.loc[len(statistics.index)] = [risk_column, chi2, p]
+        return statistics

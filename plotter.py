@@ -77,3 +77,5 @@ class Plotter:
         leg = plt.legend(loc='upper center')
         plt.show()
         
+    def heat_map(self):
+        return sns.heatmap(self.table[['loan_status', 'grade', 'purpose', 'home_ownership']].corr(), annot=True, cmap='coolwarm')
