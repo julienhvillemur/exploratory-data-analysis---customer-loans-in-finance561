@@ -1,4 +1,7 @@
 # Import necessary modules.
+from sklearn import preprocessing
+
+
 import matplotlib.pyplot as plt
 
 
@@ -77,5 +80,8 @@ class Plotter:
         leg = plt.legend(loc='upper center')
         plt.show()
         
-    def heat_map(self):
-        return sns.heatmap(self.table[['loan_status', 'grade', 'purpose', 'home_ownership']].corr(), annot=True, cmap='coolwarm')
+    def heat_map(self, column_names):
+        label_encoder = preprocessing.LabelEncoder()
+        for column in column_names:
+            self.table[column] = label_encoder.fit_transform(self.table[column])
+        return sns.heatmap(self.table[column_names].corr(), annot=True, cmap='coolwarm')
