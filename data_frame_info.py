@@ -80,8 +80,8 @@ class DataFrameInfo():
         if column_names:
             all_skew = []
             for column in column_names:
-                skew = {column:self.dataframe[column].skew(numeric_only=True)}
-                all_skew.append(skew)
+                    skew = {column: self.dataframe[column].skew(numeric_only=True)}
+                    all_skew.append(skew)
             return all_skew
         else:
             return self.dataframe.skew(numeric_only=True)
