@@ -64,19 +64,24 @@ class DataFrameTransform:
         for column, skew in skew_table.items():
             if skew > 1:
                 boxcox_sample = self.table[column]
-                boxcox_transform = stats.boxcox(boxcox_sample)
-                boxcox_data = pd.Series(boxcox_transform[0])
-                plot = sns.histplot(boxcox_data, label='Skewness: %.2f'%(boxcox_data.skew()))
-            return plot.legend()
+                boxcox_sample = boxcox_sample + 1e-10
+                boxcox_transform, _ = stats.boxcox(boxcox_sample, lmbda=None)
+                boxcox_data = pd.Series(boxcox_transform, name=f'{column}_boxcox')
+                self.table = pd.concat([self.table, boxcox_data], axis=1)
+                plot = sns.histplot(boxcox_data, label=f'Skewness: {boxcox_data.skew():.2f}')
+        plot.legend()  
+        return self.table
         
     def yeojohnson_transform(self, skew_table):
         for column, skew in skew_table.items():
-            if skew > 1:      
-                yeojohnson_sample = self.table[column]
-                yeojohnson_transform = stats.yeojohnson(yeojohnson_sample)
-                yeojohnson_data= pd.Series(yeojohnson_transform[0])
-                plot=sns.histplot(yeojohnson_data,label="Skewness: %.2f"%(yeojohnson_data.skew()) )
-            return plot.legend()
+            if skew > 1:  
+                yeojohnson_data = self.table[column]
+                yeojohnson_data = stats.yeojohnson(yeojohnson_data)
+                yeojohnson_data= pd.Series(yeojohnson_data[0])
+                self.table[column] = yeojohnson_data
+                plot=sns.histplot(yeojohnson_data,label="Skewness: %.2f"%(yeojohnson_data.skew()))
+                plot.legend()
+        return self.table
         
     def impute_outliers(self):
         """
