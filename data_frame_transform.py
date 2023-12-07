@@ -61,7 +61,7 @@ class DataFrameTransform:
         return self.table
     
     def boxcox_transform(self, skew_table):
-        for column, skew in skew_table:
+        for column, skew in skew_table.items():
             if skew > 1:
                 boxcox_sample = self.table[column]
                 boxcox_transform = stats.boxcox(boxcox_sample)

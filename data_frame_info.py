@@ -74,7 +74,8 @@ class DataFrameInfo():
         return null_percentages_table.round(2)
     
     def get_column_mean(self, column_name):
-        return self.dataframe[column_name].mean(skipna=True).round(0)
+        column = self.dataframe[column_name]
+        return column.mean(skipna=True).round(0)
     
     def column_skew(self, *column_names):
         if column_names:
