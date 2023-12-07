@@ -78,11 +78,10 @@ class DataFrameInfo():
     
     def column_skew(self, *column_names):
         if column_names:
-            all_skew = []
+            skew = []
             for column in column_names:
-                    skew = {column: self.dataframe[column].skew(numeric_only=True)}
-                    all_skew.append(skew)
-            return all_skew
+                skew = self.dataframe[column].skew(numeric_only=True)
+            return skew
         else:
             return self.dataframe.skew(numeric_only=True)
     
