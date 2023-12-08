@@ -27,6 +27,8 @@ class DataFrameInfo():
     def find_column_types(self, *columns):
         """
         Provide the data types in specifed columns or every column of the dataframe if not specified.
+        Args:
+            columns(list): a list of column names to be characterised by data type (optional).
         Returns:
             Pandas data series: the individual data types within the provided dataframe or dataframe columns.
         """
@@ -38,13 +40,19 @@ class DataFrameInfo():
     
     def get_statistics(self):
         """
-        Return statistical information about the dataframe.
+        Provides statistical information about the table input.
+        Returns:
+            pandas.DataFrame: a table of statistical information about the table input.
         """
         return self.dataframe.describe()
     
     def get_unique_values(self, *columns):
         """
-        Return the unique values within each categorical column.
+        Identifies all unique values and associated counts within the categorical columns passed in for analysis.
+        Args:
+            columns(list): a list of categorical column names to be assessed for frequency of unique values (optional).
+        Returns:
+            Pandas data series: the unique values and associated frequencies within categorical columns.
         """
         if columns:
             for column in columns:
@@ -58,13 +66,17 @@ class DataFrameInfo():
     
     def get_dataframe_shape(self):
         """
-        Return the shape of the dataframe.
+        Provide the shape of the dataframe input.
+        Returns:
+            tuple: the NumPy array shape of the dataframe input.
         """
         return self.dataframe.shape
 
     def percentage_null_values(self):
         """
-        Return the percentage of null values in each column of the dataframe.
+        Provide the percentage of null values in each column of the table input.
+        Return:
+            pandas.Series: the percentage of null values against each column of the table input.
         """
         all_null_percentages = {}
         for column in self.dataframe:
@@ -74,10 +86,24 @@ class DataFrameInfo():
         return null_percentages_table.round(2)
     
     def get_column_mean(self, column_name):
+        """
+        Calculate the mean of each specified column in the table input.
+        Args:
+            column_name(list): a list of column names for mean calculation.
+        Provides:
+            int: the calculated mean based on the provided columns rounded to 0 significant figures.
+        """
         column = self.dataframe[column_name]
         return column.mean(skipna=True).round(0)
     
     def column_skew(self, *column_names):
+        """
+        Calculate skew scores for columns in the table input.
+        Args:
+            column_names(list): the list of column names for assessing skew (optional).
+        Returns:
+            pandas.Series: the skew scores against each specified column of the table input.
+        """
         if column_names:
             skew = []
             for column in column_names:
@@ -87,9 +113,23 @@ class DataFrameInfo():
             return self.dataframe.skew(numeric_only=True)
     
     def get_mode(self, column_names):
+        """
+        Calculate the mode of each column in the table input.
+        Args:
+            column_names(list): a list of column names for calculation of mode.
+        Returns:
+            float: the value of the mode for the specified table column input.
+        """
         return self.dataframe[column_names].mode().values[0]
     
     def get_median(self, column_names):
+        """
+        Calculate the median for the specified columns in the table input.
+        Args:
+            column_names(list): a list of column names for calculation of meadian.
+        Returns:
+            float: the value of the median for the specified table column input.
+        """
         return self.dataframe[column_names].median()
     
     def get_histogram(self):
@@ -117,7 +157,7 @@ class DataFrameInfo():
             percentage_investments_recovered(numpy.float64): the percentage of the total loans amount repaid by customers.
             overall_percentage_recovered(numpy.float64): the percentage of the investor-funded portion of loans repaid by customers.
             percentage_recovered_after_6_months(numpy.float64): the percentage of the total amount paid after 6 months of installments from all customers.
-            """
+        """
         total_loans = self.dataframe['funded_amount'].sum()
         total_amount_recovered = total_loans - self.dataframe['out_prncp'].sum()
         total_amount_invested = self.dataframe['funded_amount_inv'].sum()
