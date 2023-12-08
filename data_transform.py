@@ -22,7 +22,7 @@ class DataTransform:
         """
         Removes string from the term column in the loan payments dataframe.
         Returns:
-            Pandas dataframe: the loan payments table with the 'term' column in float64 format.
+            pandas.DataFrame: the loan payments table with the 'term' column in float64 format.
         """
         self.loan_payments['term'] = self.loan_payments['term'].str.split(' ').str[0]
         self.loan_payments['term'] = self.loan_payments['term'].astype('float64')
@@ -31,8 +31,11 @@ class DataTransform:
     def convert_to_date(self, loan_payments, column_name):
         """
         Convert date columns from MMM-YY to datetime format.
+        Args:
+            loan_payments(pandas.DataFrame): a table of loans containing column of varying data types.
+            column_name(list): a list of names for the date columns in the loan_payments table.
         Returns:
-            Pandas dataframe: a table with all inputted date columns in the MM-YYYY format.
+            pandas.DataFrame: a table with all inputted date columns in the MM-YYYY format.
         """
         loan_payments[column_name] = pd.to_datetime(loan_payments[column_name], format='%b-%Y').dt.to_period('M')
         return loan_payments
@@ -40,6 +43,8 @@ class DataTransform:
     def iterate_through_columns(self):
         """
         Provide every column containing dates for conversion in the convert_to_date method.
+        Returns:
+            pandas.DataFrame: a table with all the date columns specified in 'column_names' converted to datetime format via the convert_to_date method.
         """
         column_names = ['last_payment_date', 'next_payment_date', 'last_credit_pull_date', 'issue_date', 'earliest_credit_line']
 
