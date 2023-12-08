@@ -8,6 +8,7 @@ import pandas as pd
 import yaml
  
 
+# Restrict usage of the RDSDataBase class and the retrieve() function to this file.
 if __name__ == '__main__':
     class RDSDatabaseConnector:
         """
@@ -81,26 +82,45 @@ if __name__ == '__main__':
     connect_to_database.save_file()
 
 
-# Load CSV file as dataframe from local directory.
 def open_table():
+    """
+    Load loan_payments CSV file as dataframe from local directory.
+    Returns:
+        pandas.DataFrame: a table of loan data to be used in the EDA project.
+    """
     with open('loan_payments.csv', 'r') as file:
         saved_loan_payments_table = pd.read_csv(file)
     return saved_loan_payments_table
 
-# Load null-removed CSV file as dataframe from local directory.
+
 def open_null_removed_table():
+    """
+    Load null-removed loan_payments CSV file as dataframe from local directory.
+    Returns:
+        pandas.DataFrame: a table of loan data without null values.
+    """
     with open('null_removed_table.csv', 'r') as file:
         no_null_loan_payments_table = pd.read_csv(file)
     return no_null_loan_payments_table
 
-# Load transformed CSV file as dataframe from local directory.
+
 def open_transformed_table():
+    """
+    Load transformed loan_payments CSV file as dataframe from local directory.
+    Returns:
+        pandas.DataFrame: a table of loan data transformed by imputation, data removal and skew correction.
+    """
     with open('transformed_table.csv', 'r') as file:
         transformed_loan_payments_table = pd.read_csv(file)
     return transformed_loan_payments_table
 
-# Load latest transformation of the loan_payments file in the local directory.
+
 def open_latest_table():
+    """
+    Load latest transformation of the loan_payments file in the local directory.
+    Returns:
+        pandas.DataFrame: a table of loan data transformed by imputation, data removal, skew correction and outlier imputation.
+    """
     with open('refined_table.csv', 'r') as file:
         latest_loan_payments_table = pd.read_csv(file)
     return latest_loan_payments_table
