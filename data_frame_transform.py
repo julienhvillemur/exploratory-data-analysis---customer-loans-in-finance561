@@ -33,7 +33,8 @@ class DataFrameTransform:
         self.find_info = DataFrameInfo(self.table)
        
     def drop_columns(self, columns):
-        return self.table.drop(columns, axis=1, inplace=True)
+        self.table.drop(columns, axis=1, inplace=True, errors='ignore')
+        return self.table
         
     def impute_with_mean(self, columns):
         """
