@@ -56,7 +56,7 @@ class Plotter:
         """
         Generate a bar chart of the provided loan recovery percentages.
         Args:
-            Dict: Key - type of loan recovery. Value - percentage amount recovered against the total fund.
+            loan_recoveries(Dict): Key - type of loan recovery. Value - percentage amount recovered against the total fund.
         Returns:
             BarContainer: a bar chart presenting multiple loan recovery values.
         """
@@ -69,6 +69,11 @@ class Plotter:
         """
         Visualise projected loss using line graph.
         Displays PyPlot of projected loss data.
+        Args:
+            projected_loss(float): value for charged off loans if all their instalments were paid in full.
+            real_loss(float): projected_loss minus the payments already made before the loans were charged off.
+        Returns:
+            Plot: a line graph presenting the potential revenue of charged off loans over 60 months.
         """
         months = [0, 60]
         loss = [0, projected_loss]
@@ -81,6 +86,13 @@ class Plotter:
         plt.show()
         
     def heat_map(self, column_names):
+        """
+        Visualise the correlations between loan status and risk factors.
+        Args:
+            column_names(list): a list of columns to be visualised for correlation.
+        Returns:
+            matplotlib Axes: a heatmap of the correlation scores between columns stated in column_names.
+        """
         label_encoder = preprocessing.LabelEncoder()
         for column in column_names:
             self.table[column] = label_encoder.fit_transform(self.table[column])
