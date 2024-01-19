@@ -9,77 +9,76 @@ import yaml
  
 
 # Restrict usage of the RDSDataBase class and the retrieve() function to this file.
-if __name__ == '__main__':
-    class RDSDatabaseConnector:
+class RDSDatabaseConnector:
+    """
+    Initialise class for data extraction from an RDS database.
+
+    Attributes:
+        credentials (.yaml file): a file containing the credential details necessary from access to the RDS database.
+    """
+
+    def __init__(self, credentials):
         """
-        Initialise class for data extraction from an RDS database.
-
-        Attributes:
-            credentials (.yaml file): a file containing the credential details necessary from access to the RDS database.
+        See help(RDSDatabaseConnector) for accurate signature.
         """
+        self.credentials = credentials
 
-        def __init__(self, credentials):
-            """
-            See help(RDSDatabaseConnector) for accurate signature.
-            """
-            self.credentials = credentials
-
-        def initialise_details(self):
-            """
-            Initialise the connection details and pass into an SQLAlchemy engine.
-            Returns:
-                Engine: SQLAlchemy engine for use in the database_connection method.
-            """
-            database_type = 'postgresql'
-            dbapi = 'psycopg2'
-            host = self.credentials['RDS_HOST']
-            password = self.credentials['RDS_PASSWORD']
-            user = self.credentials['RDS_USER']
-            database = self.credentials['RDS_DATABASE']
-            port = self.credentials['RDS_PORT']
-
-            engine = create_engine(f"{database_type}+{dbapi}://{user}:{password}@{host}:{port}/{database}")
-            return engine
-        
-        def database_connection(self):
-            """
-            Connect to RDS Database to retrieve the loan_payments table.
-            Returns:
-                pandas.Dataframe: a table containing multiple loans and associated data.
-            """
-            engine = self.initialise_details()
-            with engine.execution_options(isolation_level='AUTOCOMMIT').connect() as conn:
-                loan_payments = pd.read_sql_table('loan_payments', engine)
-                return loan_payments
-
-        def save_file(self):
-            """
-            Save the loan_payments dataframe as a CSV file to the local directory.
-            Enables efficient table access in the EDA project.
-            """
-            loan_payments = self.database_connection()
-            loan_payments.to_csv('loan_payments.csv', index=False)
-
-
-    def retrieve():
+    def initialise_details(self):
         """
-        Load the credentials yaml file from the local directory.
+        Initialise the connection details and pass into an SQLAlchemy engine.
         Returns:
-            yaml file: a file containing the credentials
+            Engine: SQLAlchemy engine for use in the database_connection method.
         """
-        with open('credentials.yaml', 'r') as file:
-            credentials = yaml.safe_load(file)
-        
-        return credentials
+        database_type = 'postgresql'
+        dbapi = 'psycopg2'
+        host = self.credentials['RDS_HOST']
+        password = self.credentials['RDS_PASSWORD']
+        user = self.credentials['RDS_USER']
+        database = self.credentials['RDS_DATABASE']
+        port = self.credentials['RDS_PORT']
 
-    # Open the locally saved credentials yaml file for access to the RDS database.
-    credentials = retrieve()
+        engine = create_engine(f"{database_type}+{dbapi}://{user}:{password}@{host}:{port}/{database}")
+        return engine
+    
+    def database_connection(self):
+        """
+        Connect to RDS Database to retrieve the loan_payments table.
+        Returns:
+            pandas.Dataframe: a table containing multiple loans and associated data.
+        """
+        engine = self.initialise_details()
+        with engine.execution_options(isolation_level='AUTOCOMMIT').connect() as conn:
+            loan_payments = pd.read_sql_table('loan_payments', engine)
+            return loan_payments
 
-    # Call the RDSDatabaseConnector Class with the credentials yaml file.
-    connect_to_database = RDSDatabaseConnector(credentials)
+    def save_file(self):
+        """
+        Save the loan_payments dataframe as a CSV file to the local directory.
+        Enables efficient table access in the EDA project.
+        """
+        loan_payments = self.database_connection()
+        loan_payments.to_csv('loan_payments.csv', index=False)
 
-    # Call the save_file method to retrieve and save loan_payments.csv to the local directory.
-    connect_to_database.save_file()
+
+def retrieve():
+    """
+    Load the credentials yaml file from the local directory.
+    Returns:
+        yaml file: a file containing the credentials
+    """
+    with open('credentials.yaml', 'r') as file:
+        credentials = yaml.safe_load(file)
+    
+    return credentials
+
+# Open the locally saved credentials yaml file for access to the RDS database.
+credentials = retrieve()
+
+# Call the RDSDatabaseConnector Class with the credentials yaml file.
+connect_to_database = RDSDatabaseConnector(credentials)
+
+# Call the save_file method to retrieve and save loan_payments.csv to the local directory.
+connect_to_database.save_file()
 
 
 def open_table():
