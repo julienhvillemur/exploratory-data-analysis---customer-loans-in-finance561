@@ -27,8 +27,10 @@ class DataFrameInfo():
     def find_column_types(self, *columns):
         """
         Provide the data types in specifed columns or every column of the dataframe if not specified.
+        
         Args:
             columns(list): a list of column names to be characterised by data type (optional).
+            
         Returns:
             Pandas data series: the individual data types within the provided dataframe or dataframe columns.
         """
@@ -41,6 +43,7 @@ class DataFrameInfo():
     def get_statistics(self):
         """
         Provides statistical information about the table input.
+        
         Returns:
             pandas.DataFrame: a table of statistical information about the table input.
         """
@@ -49,8 +52,10 @@ class DataFrameInfo():
     def get_unique_values(self, *columns):
         """
         Identifies all unique values and associated counts within the categorical columns passed in for analysis.
+        
         Args:
             columns(list): a list of categorical column names to be assessed for frequency of unique values (optional).
+            
         Returns:
             Pandas data series: the unique values and associated frequencies within categorical columns.
         """
@@ -67,6 +72,7 @@ class DataFrameInfo():
     def get_dataframe_shape(self):
         """
         Provide the shape of the dataframe input.
+        
         Returns:
             tuple: the NumPy array shape of the dataframe input.
         """
@@ -75,6 +81,7 @@ class DataFrameInfo():
     def percentage_null_values(self):
         """
         Provide the percentage of null values in each column of the table input.
+        
         Return:
             pandas.Series: the percentage of null values against each column of the table input.
         """
@@ -88,8 +95,10 @@ class DataFrameInfo():
     def get_column_mean(self, column_name):
         """
         Calculate the mean of each specified column in the table input.
+        
         Args:
             column_name(list): a list of column names for mean calculation.
+            
         Provides:
             int: the calculated mean based on the provided columns rounded to 0 significant figures.
         """
@@ -99,8 +108,10 @@ class DataFrameInfo():
     def column_skew(self, *column_names):
         """
         Calculate skew scores for columns in the table input.
+        
         Args:
             column_names(list): the list of column names for assessing skew (optional).
+            
         Returns:
             pandas.Series: the skew scores against each specified column of the table input.
         """
@@ -115,8 +126,10 @@ class DataFrameInfo():
     def get_mode(self, column_names):
         """
         Calculate the mode of each column in the table input.
+        
         Args:
             column_names(list): a list of column names for calculation of mode.
+            
         Returns:
             float: the value of the mode for the specified table column input.
         """
@@ -125,8 +138,10 @@ class DataFrameInfo():
     def get_median(self, column_names):
         """
         Calculate the median for the specified columns in the table input.
+        
         Args:
             column_names(list): a list of column names for calculation of meadian.
+            
         Returns:
             float: the value of the median for the specified table column input.
         """
@@ -135,6 +150,7 @@ class DataFrameInfo():
     def get_histogram(self):
         """
         Generate histogram of provided dataframe.
+        
         Returns:
             NumPy array: histogram of the provided dataframe.
         """
@@ -143,6 +159,7 @@ class DataFrameInfo():
     def get_zscores(self):
         """
         Provide the z-scores for imputted dataframes.
+        
         Returns:
             Array: the z-scores of all numeric values in the inputted dataframe.
         """
@@ -153,6 +170,7 @@ class DataFrameInfo():
         """
         Calculate the percentage of total loans and investor loan funds repaid.
         Calculate the percentage of total loans repaid in 6 months.
+        
         Returns(dict): a dictionary of three variables
             percentage_investments_recovered(numpy.float64): the percentage of the total loans amount repaid by customers.
             overall_percentage_recovered(numpy.float64): the percentage of the investor-funded portion of loans repaid by customers.
@@ -174,9 +192,11 @@ class DataFrameInfo():
     def chi_square_test(self, customer_type, risk_factors):
         """
         Test statistical relationship between loan_status and risk-factor columns via Chi-square.
+        
         Args:
             customer_type(Pandas dataframe): the loan payments table containing rows isolated to different customer types based on the 'loan_status' column.
             risk_factors(list): a list of columns representing potential risk factors for late loan payments.
+            
         Returns:
             Pandas dataframe: a table containing the Chi-square statistic and p-value for set of tested columns.
         """
