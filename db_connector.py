@@ -29,6 +29,7 @@ class RDSDatabaseConnector:
         Returns:
             Engine: SQLAlchemy engine for use in the database_connection method.
         """
+        # Assign variables for the PostgreSQL database connection credentials.
         database_type = 'postgresql'
         dbapi = 'psycopg2'
         host = self.credentials['RDS_HOST']
@@ -37,6 +38,7 @@ class RDSDatabaseConnector:
         database = self.credentials['RDS_DATABASE']
         port = self.credentials['RDS_PORT']
 
+        # Create and return sqlalchemy engine using the connection credentials.
         engine = create_engine(f"{database_type}+{dbapi}://{user}:{password}@{host}:{port}/{database}")
         return engine
     
